@@ -24,18 +24,6 @@ COPY ./backend/requirements.txt /tmp/backend/requirements.txt
 RUN pip install --no-cache-dir -i ${PIP_INDEX} -r requirements.txt
 
 COPY ./backend /tmp/backend
-# === 阶段2：构建 Frontend ===
-FROM node:18-alpine AS frontend-builder
-
-# 1. 安装编译工具链（解决原生模块编译问题）
-RUN set -ex && \
-    apk add --no-cache \
-    python3 \
-    make \
-    g++ \
-    rustc \
-    cargo \
-    libc6-compat  # 关键：Alpine系统缺失的glibc兼容库
 
 # === 阶段2：构建 Frontend ===
 FROM node:18-alpine AS frontend-builder
@@ -56,6 +44,7 @@ RUN rm -rf node_modules pnpm-lock.yaml && pnpm install --force
 COPY ./BillNote_frontend /tmp/frontend
 ENV DOCKER_BUILD=1
 RUN NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
+
 # === 阶段3：完整应用镜像 ===
 FROM python:3.11-slim
 
