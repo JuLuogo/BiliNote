@@ -29,7 +29,7 @@ COPY ./backend /tmp/backend
 FROM node:18-alpine AS frontend-builder
 
 # 安装编译工具链（解决原生模块编译问题）
-RUN apk add --no-cache python3 make g++ rustc cargo libc6-compat
+RUN apk add --no-cache python3 make g++ rust libc6-compat
 
 # 激活pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
