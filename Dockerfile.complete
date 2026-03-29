@@ -37,13 +37,14 @@ RUN set -ex && \
     cargo \
     libc6-compat  # 关键：Alpine系统缺失的glibc兼容库
 
-# 2. 启用corepack并激活pnpm（必须在RUN指令中执行）
+# 2. 安装并激活pnpm（必须在同一RUN块中）
 RUN corepack enable && \
-    corepack prepare pnpm@latest --activate
+    corepack prepare pnpm@latest --activate && \
+    pnpm --version  # 验证pnpm是否可用（调试用）
 
 WORKDIR /tmp/frontend
 
-# 3. 复制依赖文件 + 强制重新安装（所有命令必须在同一RUN块中）
+# 3. 复制依赖文件 + 强制重新安装（必须在同一RUN块中）
 COPY ./BillNote_frontend/package.json ./
 RUN rm -rf node_modules pnpm-lock.yaml && \  # 清除旧依赖缓存
     pnpm install --force  # 强制重新安装（含原生模块编译）
